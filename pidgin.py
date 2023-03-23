@@ -12,7 +12,7 @@ df = pd.read_excel(file_url)
 
 st.write(df)
 
-st.set_page_config(page_title="Add Data to Excel Sheet")
+#st.set_page_config(page_title="Add Data to Excel Sheet")
 
 # Define a function to add data to the Excel sheet
 def add_data_to_excel(date, item_name, quantity):
