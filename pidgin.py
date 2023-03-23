@@ -32,7 +32,7 @@ response = requests.post(api_url.format(owner=owner, repo=repo), headers=headers
 if response.status_code == 202:
     st.success("Repository forked successfully!")
 else:
-    st.error("Error forking repository: ", response.text)
+    st.error("Error forking repository: ")
 
 # Set the URL of the Excel file in the forked repository
 file_url = f"https://raw.githubusercontent.com/{username}/{forked_repo}/main/Expenditure.xlsx"
