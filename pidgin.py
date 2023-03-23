@@ -37,8 +37,8 @@ else:
     st.error("Error forking repository: ", response.text)
 
 # Set the URL of the Excel file in the forked repository
-file_url = f"https://raw.githubusercontent.com/{username}/{forked_repo}/main/expenditures.xlsx"
-update_file = f"https://raw.githubusercontent.com/{username}/{forked_repo}/main/extras.xlsx"
+file_url = f"https://raw.githubusercontent.com/{username}/{forked_repo}/main/Expenditure.xlsx"
+update_file = f"https://raw.githubusercontent.com/{username}/{forked_repo}/main/extra.xlsx"
 
 # Define a function to add data to the Excel sheet
 def add_data_to_excel(date, item_name, quantity):
