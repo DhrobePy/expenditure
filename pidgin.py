@@ -6,7 +6,7 @@ import pandas as pd
 import requests
 
 # Set your GitHub username and personal access token
-username = "your_username"
+username = "DhrobePy"
 access_token='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'
 
 # Set the owner and repository name for the repository you want to fork
@@ -17,7 +17,7 @@ repo = "expenditure"
 forked_repo = "expenditure_fork"
 
 # Set the API endpoint for forking a repository
-api_url = "https://api.github.com/repos/{owner}/{repo}/forks"
+api_url = "https://api.github.com/repos/DhrobePy/Expenditure/forks"
 
 # Set the headers for the API request
 headers = {"Authorization": f"Token {access_token}"}
