@@ -4,13 +4,13 @@ import requests
 #response = requests.get(url)
 
 # Set the URL of the Excel file in the Git repository
-file_url = "https://github.com/DhrobePy/expenditure/blob/a5ff7a45e75f73522f84539bf153f3210c2112cb/Expenditure.xlsx?raw=true"
-update_file="https://github.com/DhrobePy/expenditure/blob/5c85425270b295b14055d8e429cd2b14c9a91fea/extra.xlsx?raw=True"
+file_url = "Expenditure.xlsx"
+update_file="extra.xlsx"
 #response = requests.get(file_url)
 # Read the Excel file into a pandas DataFrame
-#df = pd.read_excel(file_url)
+df = pd.read_excel(file_url)
 
-#st.write(df)
+st.write(df)
 
 st.set_page_config(page_title="Add Data to Excel Sheet")
 
@@ -24,7 +24,7 @@ def add_data_to_excel(date, item_name, quantity):
     df = df.append(new_row, ignore_index=True)
 
     # Write the updated DataFrame back to the Excel file
-    df.to_excel('https://github.com/DhrobePy/expenditure/blob/5c85425270b295b14055d8e429cd2b14c9a91fea/extra.xlsx', index=False)
+    df.to_excel(update_file, index=False)
 
 # Create the Streamlit app
 st.title("Add Data to Excel Sheet")
