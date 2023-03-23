@@ -1,5 +1,5 @@
 
-access_token='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'
+'
 
 
 
@@ -9,7 +9,7 @@ import requests
 
 # Set your GitHub username and personal access token
 username = "your_username"
-access_token = "your_access_token"
+access_token='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'
 
 # Set the owner and repository name for the repository you want to fork
 owner = "DhrobePy"
