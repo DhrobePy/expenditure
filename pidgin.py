@@ -80,7 +80,7 @@ for symbols in pairs:
     train_model(model, X_train, y_train)
     future_price = predict_future_price(model, normalized_prices, n_steps)
     profit = 1.0
-        for i in range(len(symbols)):
+    for i in range(len(symbols)):
         j = (i + 1) % len(symbols)
         k = (j + 1) % len(symbols)
 
