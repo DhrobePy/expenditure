@@ -7,7 +7,7 @@ import streamlit as st
 
 # Initialize Binance API with your API keys
 binance = ccxt.binance({
-    'apiKey': 'jvkno680FsAjxFmjtbfFATjsE6ZX6b64XWDYAO83Qtujx8hpPz3y4Hn0HSOWN9zH'
+    'apiKey': 'jvkno680FsAjxFmjtbfFATjsE6ZX6b64XWDYAO83Qtujx8hpPz3y4Hn0HSOWN9zH',
     'secret': 'xtow50oJLhVwcpDoUUS0zf6hy4dy4bRfEkpBmHvYRrXOJNuUL5QqH3iiIz1mkrqs'
 })
 
