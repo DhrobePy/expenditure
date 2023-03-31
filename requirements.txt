@@ -1,6 +1,6 @@
 ccxt
 numpy
-sklearn
+scikit-learn
  tensorflow
  tensorflow
 streamlit 
