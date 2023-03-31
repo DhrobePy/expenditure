@@ -1,1 +1,9 @@
-openpyxl
+ccxt
+numpy
+sklearn
+ tensorflow
+ tensorflow
+streamlit 
+
+
+
