@@ -80,6 +80,12 @@ def main():
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
 
+    if "expenses_to_authorize" not in st.session_state:
+        st.session_state.expenses_to_authorize = []
+
+    if "authorized_expenses" not in st.session_state:
+        st.session_state.authorized_expenses = []
+
     if st.session_state.logged_in:
         dashboard()
     else:
@@ -87,3 +93,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
