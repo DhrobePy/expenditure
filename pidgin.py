@@ -37,6 +37,12 @@ def admin_dashboard():
 def user_dashboard():
     st.title("User Dashboard")
 
+    # Add a logout button
+    if st.button("Logout"):
+        st.session_state.logged_in = False
+        st.session_state.username = None
+        st.write("Logged out successfully. Redirecting to the login page...")
+
     expense_category = st.selectbox("Expense Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"])
     amount = st.number_input("Amount", min_value=0.0, step=0.1)
     expense_date = st.date_input("Expense Date", datetime.date.today())
@@ -55,6 +61,8 @@ def user_dashboard():
             st.success("Expense submitted")
         else:
             st.error("Please fill in all fields")
+
+
 
 def dashboard():
     if st.session_state.username == "admin":
