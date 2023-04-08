@@ -46,6 +46,10 @@ def get_all_expenses():
 
     return expenses
 
+def add_expense_category(category):
+    col_ref = db.collection('expense_categories')
+    col_ref.add({"category": category})
+
 
 def login_page():
     st.title("Login")
@@ -125,6 +129,14 @@ def user_dashboard():
             st.success("Expense submitted")
         else:
             st.error("Please fill in all fields")
+    #add new category 
+    new_category = st.text_input("Add a new expense category")
+    if st.button("Add Category"):
+        if new_category:
+            add_expense_category(new_category)
+            st.success("New category added")
+        else:
+            st.error("Please enter a category name")
 
 
 def admin_dashboard():
