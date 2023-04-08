@@ -12,24 +12,22 @@ cred = credentials.Certificate("Exmod.json")
 #firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'})
 
 def push_expense(expense):
-    ref = db.reference('/expenses_to_authorize')
-    ref.push(expense)
+    db.collection('expenses_to_authorize').add(expense)
 
 def get_expenses_to_authorize():
-    ref = db.reference('/expenses_to_authorize')
-    return ref.get()
+    docs = db.collection('expenses_to_authorize').stream()
+    return {doc.id: doc.to_dict() for doc in docs}
 
-def remove_expenses_to_authorize():
-    ref = db.reference('/expenses_to_authorize')
-    ref.delete()
+def remove_expenses_to_authorize(doc_id):
+    db.collection('expenses_to_authorize').document(doc_id).delete()
 
 def push_authorized_expense(expense):
-    ref = db.reference('/authorized_expenses')
-    ref.push(expense)
+    db.collection('authorized_expenses').add(expense)
 
 def get_authorized_expenses():
-    ref = db.reference('/authorized_expenses')
-    return ref.get()
+    docs = db.collection('authorized_expenses').stream()
+    return {doc.id: doc.to_dict() for doc in docs}
+
 
 def login_page():
     st.title("Login")
@@ -109,14 +107,15 @@ def admin_dashboard():
             authorized_expenses = [
                 {**expense, "Authorized": datetime.datetime.now().isoformat()} for expense in expenses_to_authorize
             ]
-            for expense in authorized_expenses:
+            for expense, doc_id in zip(authorized_expenses, expenses_to_authorize_data.keys()):
                 push_authorized_expense(expense)
-            remove_expenses_to_authorize()
+                remove_expenses_to_authorize(doc_id)
             st.success("All expenses authorized")
 
     if not authorized_expenses_df.empty:
         st.subheader("Authorized Expenses")
         st.write(authorized_expenses_df)
+
 
 def main():
     if "logged_in" not in st.session_state:
