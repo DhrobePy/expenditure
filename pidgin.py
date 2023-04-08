@@ -140,6 +140,16 @@ def pending_expenses():
             delete_pending_expense(expense_id)
             st.success(f"Expense {expense_id} deleted")
             
+def add_category():
+    new_category = st.text_input("Add a new expense category")
+    if st.button("Add Category"):
+        if new_category:
+            add_expense_category(new_category)
+            st.success("New category added")
+        else:
+            st.error("Please enter a category name")
+    
+            
 def user_dashboard():
     st.title(f"{st.session_state.username} Dashboard")
     
@@ -153,6 +163,8 @@ def user_dashboard():
     if choice=="Expense Submission":
         st.write("Lets Submit new expense")
         submit_expense_choice()
+        st.title("Add a New Category for clear expense tracking")
+        add_category()
         
     if choice== "Pending Expenses":
         st.write("Here is your all pending expense that has not been approved yet")
@@ -161,6 +173,10 @@ def user_dashboard():
     if choice == "Authorized Expenses":
         st.write("Here is your all expenses that has been approved")
         authorized_expenses_all()
+        
+    if choice == "Partial Update":
+        st.write("Need to update following entries")
+        partial_update()
         
        
         
@@ -171,13 +187,7 @@ def user_dashboard():
     #Submit Expense Function:
     
     #add new category 
-    new_category = st.text_input("Add a new expense category")
-    if st.button("Add Category"):
-        if new_category:
-            add_expense_category(new_category)
-            st.success("New category added")
-        else:
-            st.error("Please enter a category name")
+    
     
     #Deleting pending expense
     
