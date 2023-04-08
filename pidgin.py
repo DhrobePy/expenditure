@@ -50,18 +50,18 @@ def login_page():
         else:
             st.error("Invalid username or password")
 
+
 def get_user_expenses(username):
-    ref = db.reference('/expenses_to_authorize')
-    all_expenses = ref.get()
-    if not all_expenses:
-        return {}
-    
+    col_ref = db.collection('expenses_to_authorize')
+    query_ref = col_ref.where('Username', '==', username)
+    docs = query_ref.stream()
+
     user_expenses = {}
-    for doc_id, expense in all_expenses.items():
-        if expense["Username"] == username:
-            user_expenses[doc_id] = expense
+    for doc in docs:
+        user_expenses[doc.id] = doc.to_dict()
 
     return user_expenses
+
 
 
 def user_dashboard():
