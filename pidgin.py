@@ -96,6 +96,41 @@ def user_dashboard():
     if st.button("Add Category"):
         if new_category:
             st.session_state.expense_categories.append(new_category)
-           
+            st.success(f"Added category: {new_category}")
+        else:
+            st.error("Please enter a category name")
 
+    expense_category = st.selectbox("Expense Category", st.session_state.expense_categories)
+    amount = st.number_input("Amount", min_value=0.0, step=0.1)
+    expense_date = st.date_input("Expense Date", datetime.date.today())
+    expense_method = st.selectbox("Expense Method", ["", "Cash", "Credit Card", "Debit Card", "Bank Transfer"])
 
+    if st.button("Submit Expense"):
+        if expense_category and amount > 0 and expense_method:
+            new_expense = {
+                "Username": st.session_state.username,
+                "Category": expense_category,
+                "Amount": amount,
+                "Date": expense_date.isoformat(),
+                "Method": expense_method,
+                "Submitted": datetime.datetime.now().isoformat(),
+            }
+            push_expense(new_expense)
+            st.success("Expense submitted")
+        else:
+            st.error("Please fill in all fields")
+
+def dashboard():
+    if st.session_state.username == "admin":
+        admin_dashboard()
+    else:
+        user_dashboard()
+
+# Main
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if not st.session_state.logged_in:
+    login_page()
+else:
+    dashboard()
