@@ -90,9 +90,55 @@ def get_user_expenses(username):
 
     return user_expenses
 
+def apply_expense_form_css():
+    expense_form_css = """
+    <style>
+        /* Container for form elements */
+        .form-container {
+            margin: 20px 0;
+        }
+
+        /* Label styles */
+        .form-container label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Input styles */
+        .form-container input, .form-container select {
+            width: 300px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Button styles */
+        .form-container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Button hover effect */
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    """
+    st.markdown(expense_form_css, unsafe_allow_html=True)
 
 
 def user_dashboard():
+    if st.session_state.username != "admin":
+        apply_expense_form_css()
+        
     st.title(f"{st.session_state.username} Dashboard")
 
     user_expenses_data = get_user_expenses(st.session_state.username) or {}
