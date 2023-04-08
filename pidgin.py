@@ -56,7 +56,18 @@ def delete_pending_expense(expense_id):
     col_ref = db.collection('expenses_to_authorize')
     col_ref.document(expense_id).delete()
 
+def format_expense(expense):
+    return f"{expense['Category']} - {expense['Amount']} - {expense['Date']} - {expense['Method']}"
 
+def get_method_index(method):
+    methods = ["Cash", "Credit Card", "Debit Card", "Bank Transfer"]
+    return methods.index(method)
+
+# Replace update_expense with your actual implementation for updating expenses
+def update_expense(expense_id, updated_expense):
+    pass
+    
+    
 def login_page():
     st.title("Login")
 
