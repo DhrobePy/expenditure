@@ -1,6 +1,7 @@
 Firebase-admin
 streamlit 
 firebase_admin
+streamlit_option_menu
 
 
 
