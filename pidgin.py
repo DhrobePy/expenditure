@@ -200,7 +200,22 @@ def admin_dashboard():
         st.write(filtered_expenses_df)
     else:
         st.write("No expenses found")
+    
+    #show all expense in categories
+    if st.button("Show Category-wise Expenses"):
+        all_expenses = get_all_expenses()
+        expenses_by_category = {}
 
+        for expense in all_expenses:
+            category = expense["Category"]
+            if category not in expenses_by_category:
+                expenses_by_category[category] = []
+            expenses_by_category[category].append(expense)
+
+        for category, expenses in expenses_by_category.items():
+            st.subheader(f"Category: {category}")
+            expenses_df = pd.DataFrame(expenses, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted"])
+            st.write(expenses_df)
 
 def main():
     if "logged_in" not in st.session_state:
