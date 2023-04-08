@@ -93,6 +93,13 @@ def user_dashboard():
         else:
             st.error("Please fill in all fields")
 
+def dashboard():
+    if st.session_state.username == "admin":
+        admin_dashboard()
+    else:
+        user_dashboard()
+
+
 def login_page():
     st.title("Login")
 
