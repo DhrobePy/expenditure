@@ -89,11 +89,6 @@ def get_user_expenses(username):
 def user_dashboard():
     st.title("User Dashboard")
 
-    if st.button("Logout"):
-        st.session_state.logged_in = False
-        st.write("Logging out...")
-        return
-
     user_expenses_data = get_user_expenses(st.session_state.username) or {}
     user_expenses = [expense for expense in user_expenses_data.values()]
     user_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted"])
@@ -137,7 +132,11 @@ def user_dashboard():
             st.success("New category added")
         else:
             st.error("Please enter a category name")
-
+    #add logout button
+    if st.button("Logout"):
+        st.session_state.logged_in = False
+        st.write("Logging out...")
+        return
 
 def admin_dashboard():
     st.title("Admin Dashboard")
