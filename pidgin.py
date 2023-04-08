@@ -8,22 +8,6 @@ from firebase_admin import firestore
 
 db = firestore.client()
 
-def get_expenses_to_authorize():
-    ref = db.reference('/expenses_to_authorize')
-    try:
-        expenses = ref.get()
-    except NotFoundError:
-        expenses = {}
-    return expenses
-
-def get_authorized_expenses():
-    ref = db.reference('/authorized_expenses')
-    try:
-        expenses = ref.get()
-    except NotFoundError:
-        expenses = {}
-    return expenses
-
 
 # Initialize Firebase
 cred = credentials.Certificate("Exmod.json")
