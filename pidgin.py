@@ -61,9 +61,10 @@ def login_page():
 
     users = {
         "admin": {"password": "admin101"},
-        "dhrobe": {"password": "dhrobe123"},
-        "shepu": {"password": "shepu123"},
-        "rupam": {"password": "rupam123"},
+        "rokon": {"password": "rokon123"},
+        "sahosh": {"password": "sahosh345"},
+        "talha": {"password": "talha456"},
+        "kawsar":{"password": "kawsar567"}
     }
 
     username = st.text_input("Username")
