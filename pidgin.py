@@ -103,19 +103,24 @@ def admin_dashboard():
     if not expenses_to_authorize_df.empty:
         st.subheader("Expenses to Authorize")
         st.write(expenses_to_authorize_df)
-        if st.button("Authorize All"):
+        
+        col1, col2 = st.columns(2)
+        if col1.button("Authorize All"):
             authorized_expenses = [
                 {**expense, "Authorized": datetime.datetime.now().isoformat()} for expense in expenses_to_authorize
             ]
-            for expense, doc_id in zip(authorized_expenses, expenses_to_authorize_data.keys()):
+            for expense in authorized_expenses:
                 push_authorized_expense(expense)
-                remove_expenses_to_authorize(doc_id)
+            remove_expenses_to_authorize()
             st.success("All expenses authorized")
+
+        if col2.button("Reject All"):
+            remove_expenses_to_authorize()
+            st.success("All expenses rejected")
 
     if not authorized_expenses_df.empty:
         st.subheader("Authorized Expenses")
         st.write(authorized_expenses_df)
-
 
 def main():
     if "logged_in" not in st.session_state:
