@@ -92,6 +92,29 @@ def user_dashboard():
             st.success("Expense submitted")
         else:
             st.error("Please fill in all fields")
+
+def login_page():
+    st.title("Login")
+
+    users = {
+        "admin": {"password": "admin101"},
+        "maker1": {"password": "maker123"},
+        "user3": {"password": "user3pass"},
+        "user4": {"password": "user4pass"},
+    }
+
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Login"):
+        if username in users and users[username]["password"] == password:
+            st.success(f"Logged in as {username}")
+            st.session_state.logged_in = True
+            st.session_state.username = username
+        else:
+            st.error("Invalid username or password")
+
+
 def main():
     if "logged_in" not in st.session_state:
         st.session_state.logged_in = False
