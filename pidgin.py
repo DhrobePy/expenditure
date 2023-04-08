@@ -173,10 +173,7 @@ def admin_dashboard():
         st.subheader("Authorized Expenses")
         st.write(authorized_expenses_df)
         
-    if st.button("Logout"):
-        st.session_state.logged_in = False
-        st.write("Logging out...")
-        return
+    
     
     search_category = st.selectbox("Search by Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"])
     search_keyword = st.text_input("Search by Keyword")
@@ -216,6 +213,11 @@ def admin_dashboard():
             st.subheader(f"Category: {category}")
             expenses_df = pd.DataFrame(expenses, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted"])
             st.write(expenses_df)
+            
+    if st.button("Logout"):
+        st.session_state.logged_in = False
+        st.write("Logging out...")
+        return
 
 def main():
     if "logged_in" not in st.session_state:
