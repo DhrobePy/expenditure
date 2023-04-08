@@ -58,18 +58,23 @@ def user_dashboard():
         st.write("Logging out...")
         return
 
-    if "expense_categories" not in st.session_state:
-        st.session_state.expense_categories = ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"]
+    user_expenses_data = get_user_expenses(st.session_state.username) or {}
+    user_expenses = [expense for expense in user_expenses_data.values()]
+    user_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted"])
 
-    new_category = st.text_input("New Expense Category")
-    if st.button("Add Category"):
-        if new_category:
-            st.session_state.expense_categories.append(new_category)
-            st.success(f"Added category: {new_category}")
+    if not user_expenses_df.empty:
+        st.subheader("Your Expenses")
+        st.write(user_expenses_df)
+
+        search_option = st.selectbox("Search expenses by", ["All expenses", "Date"])
+        if search_option == "Date":
+            search_date = st.date_input("Select a date", datetime.date.today())
+            filtered_expenses_df = user_expenses_df[user_expenses_df['Date'] == search_date.isoformat()]
+            st.write(filtered_expenses_df)
         else:
-            st.error("Please enter a category name")
+            st.write(user_expenses_df)
 
-    expense_category = st.selectbox("Expense Category", st.session_state.expense_categories)
+    expense_category = st.selectbox("Expense Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"])
     amount = st.number_input("Amount", min_value=0.0, step=0.1)
     expense_date = st.date_input("Expense Date", datetime.date.today())
     expense_method = st.selectbox("Expense Method", ["", "Cash", "Credit Card", "Debit Card", "Bank Transfer"])
