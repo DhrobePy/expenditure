@@ -92,6 +92,26 @@ def get_user_expenses(username):
     return user_expenses
 
 
+def submit_expense_choice():
+    expense_category = st.selectbox("Expense Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"])
+    amount = st.number_input("Amount", min_value=0.0, step=0.1)
+    expense_date = st.date_input("Expense Date", datetime.date.today())
+    expense_method = st.selectbox("Expense Method", ["", "Cash", "Credit Card", "Debit Card", "Bank Transfer"])
+    if st.button("Submit Expense"):
+        if expense_category and amount > 0 and expense_method:
+            new_expense = {
+                "Username": st.session_state.username,
+                "Category": expense_category,
+                "Amount": amount,
+                "Date": expense_date.isoformat(),
+                "Method": expense_method,
+                "Submitted": datetime.datetime.now().isoformat(),
+            }
+            push_expense(new_expense)
+            st.success("Expense submitted")
+        else:
+            st.error("Please fill in all fields")
+
 def user_dashboard():
     st.title(f"{st.session_state.username} Dashboard")
     
@@ -101,7 +121,11 @@ def user_dashboard():
         menu_icon='cast',
         orientation='horizontal'
     )
-
+    
+    if choice=="Expense Submission":
+        st.write("Lets Submit new expense")
+        submit_expense_choice()
+        
     user_expenses_data = get_user_expenses(st.session_state.username) or {}
     user_expenses = [expense for expense in user_expenses_data.values()]
     user_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted"])
@@ -118,25 +142,10 @@ def user_dashboard():
         else:
             st.write(user_expenses_df)
 
-    expense_category = st.selectbox("Expense Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"])
-    amount = st.number_input("Amount", min_value=0.0, step=0.1)
-    expense_date = st.date_input("Expense Date", datetime.date.today())
-    expense_method = st.selectbox("Expense Method", ["", "Cash", "Credit Card", "Debit Card", "Bank Transfer"])
-
-    if st.button("Submit Expense"):
-        if expense_category and amount > 0 and expense_method:
-            new_expense = {
-                "Username": st.session_state.username,
-                "Category": expense_category,
-                "Amount": amount,
-                "Date": expense_date.isoformat(),
-                "Method": expense_method,
-                "Submitted": datetime.datetime.now().isoformat(),
-            }
-            push_expense(new_expense)
-            st.success("Expense submitted")
-        else:
-            st.error("Please fill in all fields")
+    
+    
+    #Submit Expense Function:
+    
     #add new category 
     new_category = st.text_input("Add a new expense category")
     if st.button("Add Category"):
