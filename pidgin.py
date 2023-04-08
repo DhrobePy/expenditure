@@ -6,10 +6,11 @@ from firebase_admin import credentials
 from firebase_admin.exceptions import NotFoundError
 from firebase_admin import firestore
 
-db = firestore.client()
+
 
 cred = credentials.Certificate("Exmod.json")
 firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'})
+db = firestore.client()
 
 def push_expense(expense):
     db.collection('expenses_to_authorize').add(expense)
