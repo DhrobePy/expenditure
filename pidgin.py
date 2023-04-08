@@ -29,6 +29,23 @@ def get_authorized_expenses():
     docs = db.collection('authorized_expenses').stream()
     return {doc.id: doc.to_dict() for doc in docs}
 
+def get_all_expenses():
+    expenses = []
+
+    # Fetch expenses_to_authorize
+    col_ref = db.collection('expenses_to_authorize')
+    docs = col_ref.stream()
+    for doc in docs:
+        expenses.append(doc.to_dict())
+
+    # Fetch authorized_expenses
+    col_ref = db.collection('authorized_expenses')
+    docs = col_ref.stream()
+    for doc in docs:
+        expenses.append(doc.to_dict())
+
+    return expenses
+
 
 def login_page():
     st.title("Login")
@@ -149,6 +166,29 @@ def admin_dashboard():
         st.session_state.logged_in = False
         st.write("Logging out...")
         return
+    
+    search_category = st.selectbox("Search by Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"])
+    search_keyword = st.text_input("Search by Keyword")
+
+    all_expenses = get_all_expenses()
+    filtered_expenses = []
+
+    for expense in all_expenses:
+        if search_category and search_keyword:
+            if expense["Category"] == search_category and search_keyword.lower() in expense["Category"].lower():
+                filtered_expenses.append(expense)
+        elif search_category:
+            if expense["Category"] == search_category:
+                filtered_expenses.append(expense)
+        elif search_keyword:
+            if search_keyword.lower() in expense["Category"].lower():
+                filtered_expenses.append(expense)
+
+    if filtered_expenses:
+        filtered_expenses_df = pd.DataFrame(filtered_expenses, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted"])
+        st.write(filtered_expenses_df)
+    else:
+        st.write("No expenses found")
 
 
 def main():
