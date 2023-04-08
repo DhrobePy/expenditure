@@ -93,7 +93,7 @@ def get_user_expenses(username):
 
 
 def user_dashboard():
-    st.title("User Dashboard")
+    st.title(f"{st.session_state.username} Dashboard")
 
     user_expenses_data = get_user_expenses(st.session_state.username) or {}
     user_expenses = [expense for expense in user_expenses_data.values()]
@@ -156,7 +156,7 @@ def user_dashboard():
         return
 
 def admin_dashboard():
-    st.title("Admin Dashboard")
+    st.title(f"{st.session_state.username} Dashboard")
 
     expenses_to_authorize_data = get_expenses_to_authorize() or {}
     expenses_to_authorize = [expense for expense in expenses_to_authorize_data.values()]
