@@ -174,7 +174,7 @@ def partial_update():
                     }
                 update_expense(expense_to_edit["id"], updated_expense)
                 st.success("Expense updated and awaiting approval")
-             else:
+            else:
                 st.error("Please fill in all fields")
             
 def user_dashboard():
