@@ -93,6 +93,13 @@ def get_user_expenses(username):
 
 def user_dashboard():
     st.title(f"{st.session_state.username} Dashboard")
+    
+    choice = option_menu(
+        options=['Expense Submission', 'Pending Expenses', 'Authorized Expenses', 'Partial Update', 'Performance Report'],
+        menu_title=None,
+        menu_icon='cast',
+        orientation='horizontal'
+    )
 
     user_expenses_data = get_user_expenses(st.session_state.username) or {}
     user_expenses = [expense for expense in user_expenses_data.values()]
