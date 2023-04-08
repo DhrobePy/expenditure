@@ -111,21 +111,8 @@ def submit_expense_choice():
             st.success("Expense submitted")
         else:
             st.error("Please fill in all fields")
-
-def user_dashboard():
-    st.title(f"{st.session_state.username} Dashboard")
-    
-    choice = option_menu(
-        options=['Expense Submission', 'Pending Expenses', 'Authorized Expenses', 'Partial Update', 'Performance Report'],
-        menu_title=None,
-        menu_icon='cast',
-        orientation='horizontal'
-    )
-    
-    if choice=="Expense Submission":
-        st.write("Lets Submit new expense")
-        submit_expense_choice()
-        
+            
+def authorized_expenses_all():
     user_expenses_data = get_user_expenses(st.session_state.username) or {}
     user_expenses = [expense for expense in user_expenses_data.values()]
     user_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted"])
@@ -141,6 +128,43 @@ def user_dashboard():
             st.write(filtered_expenses_df)
         else:
             st.write(user_expenses_df)
+            
+def pending_expenses():
+    st.subheader("Pending Expenses")
+    user_expenses_data = get_user_expenses(st.session_state.username) or {}
+
+    for expense_id, expense in user_expenses_data.items():
+        st.write(f"Category: {expense['Category']}, Amount: {expense['Amount']}, Date: {expense['Date']}, Method: {expense['Method']}")
+        delete_expense_button = st.button(f"Delete expense {expense_id}")
+        if delete_expense_button:
+            delete_pending_expense(expense_id)
+            st.success(f"Expense {expense_id} deleted")
+            
+def user_dashboard():
+    st.title(f"{st.session_state.username} Dashboard")
+    
+    choice = option_menu(
+        options=['Expense Submission', 'Pending Expenses', 'Authorized Expenses', 'Partial Update', 'Performance Report'],
+        menu_title=None,
+        menu_icon='cast',
+        orientation='horizontal'
+    )
+    
+    if choice=="Expense Submission":
+        st.write("Lets Submit new expense")
+        submit_expense_choice()
+        
+    if choice== "Pending Expenses":
+        st.write("Here is your all pending expense that has not been approved yet")
+        pending_expenses()
+        
+    if choice == "Authorized Expenses":
+        st.write("Here is your all expenses that has been approved")
+        authorized_expenses_all()
+        
+       
+        
+    
 
     
     
@@ -156,15 +180,7 @@ def user_dashboard():
             st.error("Please enter a category name")
     
     #Deleting pending expense
-    st.subheader("Pending Expenses")
-    user_expenses_data = get_user_expenses(st.session_state.username) or {}
-
-    for expense_id, expense in user_expenses_data.items():
-        st.write(f"Category: {expense['Category']}, Amount: {expense['Amount']}, Date: {expense['Date']}, Method: {expense['Method']}")
-        delete_expense_button = st.button(f"Delete expense {expense_id}")
-        if delete_expense_button:
-            delete_pending_expense(expense_id)
-            st.success(f"Expense {expense_id} deleted")
+    
     #add logout button
     if st.button("Logout"):
         st.session_state.logged_in = False
