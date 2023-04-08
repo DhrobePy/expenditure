@@ -51,6 +51,11 @@ def add_expense_category(category):
     col_ref.add({"category": category})
 
 
+def delete_pending_expense(expense_id):
+    col_ref = db.collection('expenses_to_authorize')
+    col_ref.document(expense_id).delete()
+
+
 def login_page():
     st.title("Login")
 
@@ -132,6 +137,17 @@ def user_dashboard():
             st.success("New category added")
         else:
             st.error("Please enter a category name")
+    
+    #Deleting pending expense
+    st.subheader("Pending Expenses")
+    user_expenses_data = get_user_expenses(st.session_state.username) or {}
+
+    for expense_id, expense in user_expenses_data.items():
+        st.write(f"Category: {expense['Category']}, Amount: {expense['Amount']}, Date: {expense['Date']}, Method: {expense['Method']}")
+        delete_expense_button = st.button(f"Delete expense {expense_id}")
+        if delete_expense_button:
+            delete_pending_expense(expense_id)
+            st.success(f"Expense {expense_id} deleted")
     #add logout button
     if st.button("Logout"):
         st.session_state.logged_in = False
