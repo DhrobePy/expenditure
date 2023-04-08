@@ -4,6 +4,7 @@ import datetime
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin.exceptions import NotFoundError
+from firebase_admin import firestore
 
 db = firestore.client()
 
