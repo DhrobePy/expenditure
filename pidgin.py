@@ -187,7 +187,19 @@ def partial_update():
                 st.success("Expense updated and awaiting approval")
             else:
                 st.error("Please fill in all fields")
-            
+
+                
+def au_all():
+    st.subheader("Your Authorized Expenses")
+    user_expenses_data = get_user_expenses(st.session_state.username) or {}
+    user_authorized_expenses = [expense for expense in user_expenses_data.values() if expense["is_approved"]]
+    user_authorized_expenses_df = pd.DataFrame(user_authorized_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
+    if not user_authorized_expenses_df.empty:
+        st.write(user_authorized_expenses_df)
+    else:
+        st.write("No authorized expenses to display")
+
+                
 def user_dashboard():
     st.title(f"{st.session_state.username} Dashboard")
     
@@ -211,6 +223,7 @@ def user_dashboard():
     if choice == "Authorized Expenses":
         st.write("Here is your all expenses that has been approved")
         authorized_expenses_all()
+        au_all()
         
     if choice == "Partial Update":
         st.write("Need to update following entries")
