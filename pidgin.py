@@ -89,6 +89,7 @@ def user_dashboard():
         else:
             st.error("Please fill in all fields")
 
+
 def admin_dashboard():
     st.title("Admin Dashboard")
 
@@ -111,16 +112,19 @@ def admin_dashboard():
             ]
             for expense in authorized_expenses:
                 push_authorized_expense(expense)
-            remove_expenses_to_authorize()
+            for doc_id in expenses_to_authorize_data.keys():
+                remove_expenses_to_authorize(doc_id)
             st.success("All expenses authorized")
 
         if col2.button("Reject All"):
-            remove_expenses_to_authorize()
+            for doc_id in expenses_to_authorize_data.keys():
+                remove_expenses_to_authorize(doc_id)
             st.success("All expenses rejected")
 
     if not authorized_expenses_df.empty:
         st.subheader("Authorized Expenses")
         st.write(authorized_expenses_df)
+
 
 def main():
     if "logged_in" not in st.session_state:
