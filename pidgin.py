@@ -50,6 +50,20 @@ def login_page():
         else:
             st.error("Invalid username or password")
 
+def get_user_expenses(username):
+    ref = db.reference('/expenses_to_authorize')
+    all_expenses = ref.get()
+    if not all_expenses:
+        return {}
+    
+    user_expenses = {}
+    for doc_id, expense in all_expenses.items():
+        if expense["Username"] == username:
+            user_expenses[doc_id] = expense
+
+    return user_expenses
+
+
 def user_dashboard():
     st.title("User Dashboard")
 
