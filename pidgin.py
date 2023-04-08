@@ -1,20 +1,23 @@
+import streamlit as st
+import pandas as pd
+import datetime
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
-import streamlit as st
-import datetime
 
+# Initialize Firebase
 cred = credentials.Certificate("Exmod.json")
-#firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'
-#})
+# firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'})
 
+# Firebase interaction functions
 def push_expense(expense):
     ref = db.reference('/expenses_to_authorize')
     ref.push(expense)
 
 def get_expenses_to_authorize():
     ref = db.reference('/expenses_to_authorize')
-    return ref.get()
+    expenses = ref.get()
+    return expenses if expenses else {}
 
 def remove_expenses_to_authorize():
     ref = db.reference('/expenses_to_authorize')
@@ -26,7 +29,30 @@ def push_authorized_expense(expense):
 
 def get_authorized_expenses():
     ref = db.reference('/authorized_expenses')
-    return ref.get()
+    expenses = ref.get()
+    return expenses if expenses else {}
+
+# Dashboard functions
+def login_page():
+    st.title("Login")
+
+    users = {
+        "admin": {"password": "admin101"},
+        "maker1": {"password": "maker123"},
+        "user3": {"password": "user3pass"},
+        "user4": {"password": "user4pass"},
+    }
+
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Login"):
+        if username in users and users[username]["password"] == password:
+            st.success(f"Logged in as {username}")
+            st.session_state.logged_in = True
+            st.session_state.username = username
+        else:
+            st.error("Invalid username or password")
 
 def admin_dashboard():
     st.title("Admin Dashboard")
@@ -70,75 +96,6 @@ def user_dashboard():
     if st.button("Add Category"):
         if new_category:
             st.session_state.expense_categories.append(new_category)
-            st.success(f"Added category: {new_category}")
-        else:
-            st.error("Please enter a category name")
-
-    expense_category = st.selectbox("Expense Category", st.session_state.expense_categories)
-    amount = st.number_input("Amount", min_value=0.0, step=0.1)
-    expense_date = st.date_input("Expense Date", datetime.date.today())
-    expense_method = st.selectbox("Expense Method", ["", "Cash", "Credit Card", "Debit Card", "Bank Transfer"])
-
-    if st.button("Submit Expense"):
-        if expense_category and amount > 0 and expense_method:
-            new_expense = {
-                "Username": st.session_state.username,
-                "Category": expense_category,
-                "Amount": amount,
-                "Date": expense_date.isoformat(),
-                "Method": expense_method,
-                "Submitted": datetime.datetime.now().isoformat(),
-            }
-            push_expense(new_expense)
-            st.success("Expense submitted")
-        else:
-            st.error("Please fill in all fields")
-
-def dashboard():
-    if st.session_state.username == "admin":
-        admin_dashboard()
-    else:
-        user_dashboard()
-
-
-def login_page():
-    st.title("Login")
-
-    users = {
-        "admin": {"password": "admin101"},
-        "maker1": {"password": "maker123"},
-        "user3": {"password": "user3pass"},
-        "user4": {"password": "user4pass"},
-    }
-
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-
-    if st.button("Login"):
-        if username in users and users[username]["password"] == password:
-            st.success(f"Logged in as {username}")
-            st.session_state.logged_in = True
-            st.session_state.username = username
-        else:
-            st.error("Invalid username or password")
-
-
-def main():
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
-
-    if "expenses_to_authorize" not in st.session_state:
-        st.session_state.expenses_to_authorize = []
-
-    if "authorized_expenses" not in st.session_state:
-        st.session_state.authorized_expenses = []
-
-    if st.session_state.logged_in:
-        dashboard()
-    else:
-        login_page()
-
-if __name__ == "__main__":
-    main()
+           
 
 
