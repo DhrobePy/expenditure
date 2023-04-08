@@ -13,20 +13,17 @@ USERS = {
 def admin_dashboard():
     st.title("Admin Dashboard")
 
-    if "expenses_to_authorize" not in st.session_state:
-        st.session_state.expenses_to_authorize = []
-
-    if "authorized_expenses" not in st.session_state:
-        st.session_state.authorized_expenses = []
-
-    expenses_to_authorize_df = pd.DataFrame(st.session_state.expenses_to_authorize, columns=["Username", "Category", "Amount", "Date", "Method"])
-    authorized_expenses_df = pd.DataFrame(st.session_state.authorized_expenses, columns=["Username", "Category", "Amount", "Date", "Method"])
+    expenses_to_authorize_df = pd.DataFrame(st.session_state.expenses_to_authorize, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted"])
+    authorized_expenses_df = pd.DataFrame(st.session_state.authorized_expenses, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
 
     if not expenses_to_authorize_df.empty:
         st.subheader("Expenses to Authorize")
         st.write(expenses_to_authorize_df)
         if st.button("Authorize All"):
-            st.session_state.authorized_expenses.extend(st.session_state.expenses_to_authorize)
+            authorized_expenses = [
+                {**expense, "Authorized": datetime.datetime.now()} for expense in st.session_state.expenses_to_authorize
+            ]
+            st.session_state.authorized_expenses.extend(authorized_expenses)
             st.session_state.expenses_to_authorize = []
             st.success("All expenses authorized")
 
@@ -37,11 +34,10 @@ def admin_dashboard():
 def user_dashboard():
     st.title("User Dashboard")
 
-    # Add a logout button
     if st.button("Logout"):
         st.session_state.logged_in = False
-        st.session_state.username = None
-        st.write("Logged out successfully. Redirecting to the login page...")
+        st.write("Logging out...")
+        return
 
     expense_category = st.selectbox("Expense Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"])
     amount = st.number_input("Amount", min_value=0.0, step=0.1)
@@ -56,12 +52,12 @@ def user_dashboard():
                 "Amount": amount,
                 "Date": expense_date,
                 "Method": expense_method,
+                "Submitted": datetime.datetime.now(),
             }
             st.session_state.expenses_to_authorize.append(new_expense)
             st.success("Expense submitted")
         else:
             st.error("Please fill in all fields")
-
 
 
 def dashboard():
