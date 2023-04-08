@@ -5,6 +5,26 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
+from firebase_admin.exceptions import NotFoundError
+
+
+def get_expenses_to_authorize():
+    ref = db.reference('/expenses_to_authorize')
+    try:
+        expenses = ref.get()
+    except NotFoundError:
+        expenses = {}
+    return expenses
+
+def get_authorized_expenses():
+    ref = db.reference('/authorized_expenses')
+    try:
+        expenses = ref.get()
+    except NotFoundError:
+        expenses = {}
+    return expenses
+
+
 # Initialize Firebase
 cred = credentials.Certificate("Exmod.json")
 # firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'})
