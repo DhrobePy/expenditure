@@ -148,7 +148,34 @@ def add_category():
             st.success("New category added")
         else:
             st.error("Please enter a category name")
-    
+
+def partial_update():
+    st.subheader("Edit Authorized Expenses")
+    user_expenses_data = get_user_expenses(st.session_state.username) or {}
+    user_approved_expenses = [expense for expense in user_expenses_data.values() if expense["is_approved"]]
+    expense_to_edit = st.selectbox("Select an expense to edit", user_approved_expenses, format_func=format_expense)
+        
+    if expense_to_edit:
+        expense_category = st.text_input("Expense Category", expense_to_edit["Category"])
+        amount = st.number_input("Amount", min_value=0.0, step=0.1, value=expense_to_edit["Amount"])
+        expense_date = st.date_input("Expense Date", datetime.datetime.strptime(expense_to_edit["Date"], "%Y-%m-%d").date())
+        expense_method = st.selectbox("Expense Method", ["Cash", "Credit Card", "Debit Card", "Bank Transfer"], index=get_method_index(expense_to_edit["Method"]))
+        
+        if st.button("Update Expense"):
+            if expense_category and amount > 0 and expense_method:
+                updated_expense = {
+                        "Username": st.session_state.username,
+                        "Category": expense_category,
+                        "Amount": amount,
+                        "Date": expense_date.isoformat(),
+                        "Method": expense_method,
+                        "Submitted": datetime.datetime.now().isoformat(),
+                        "is_approved": False,
+                    }
+                update_expense(expense_to_edit["id"], updated_expense)
+                st.success("Expense updated and awaiting approval")
+             else:
+                st.error("Please fill in all fields")
             
 def user_dashboard():
     st.title(f"{st.session_state.username} Dashboard")
