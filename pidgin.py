@@ -230,7 +230,27 @@ def admin_dashboard():
             st.subheader(f"Category: {category}")
             expenses_df = pd.DataFrame(expenses, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted"])
             st.write(expenses_df)
-            
+    #Date Range
+    st.subheader("View expenses by date range")
+    date_range = st.date_input("Select a date range", [datetime.date.today() - datetime.timedelta(days=7), datetime.date.today()])
+
+    if date_range:
+        start_date = date_range[0]
+        end_date = date_range[1]
+
+        all_expenses = get_all_expenses()
+        filtered_expenses = []
+
+        for expense in all_expenses:
+            expense_date = datetime.datetime.strptime(expense["Date"], "%Y-%m-%d").date()
+            if start_date <= expense_date <= end_date:
+                filtered_expenses.append(expense)
+
+        if filtered_expenses:
+            filtered_expenses_df = pd.DataFrame(filtered_expenses, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted"])
+            st.write(filtered_expenses_df)
+        else:
+            st.write("No expenses found for the selected date range")
     if st.button("Logout"):
         st.session_state.logged_in = False
         st.write("Logging out...")
