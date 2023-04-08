@@ -1,9 +1,7 @@
-ccxt
-numpy
-scikit-learn
- tensorflow
- tensorflow
+Firebase-admin
 streamlit 
+firebase_admin
+
 
 
 
