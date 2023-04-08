@@ -9,7 +9,7 @@ from firebase_admin import firestore
 db = firestore.client()
 
 cred = credentials.Certificate("Exmod.json")
-#firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'})
+firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'})
 
 def push_expense(expense):
     db.collection('expenses_to_authorize').add(expense)
