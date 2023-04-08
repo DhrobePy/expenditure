@@ -144,6 +144,11 @@ def admin_dashboard():
     if not authorized_expenses_df.empty:
         st.subheader("Authorized Expenses")
         st.write(authorized_expenses_df)
+        
+    if st.button("Logout"):
+        st.session_state.logged_in = False
+        st.write("Logging out...")
+        return
 
 
 def main():
