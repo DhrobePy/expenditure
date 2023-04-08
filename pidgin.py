@@ -8,20 +8,16 @@ from firebase_admin import firestore
 
 db = firestore.client()
 
-
-# Initialize Firebase
 cred = credentials.Certificate("Exmod.json")
-# firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'})
+#firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'})
 
-# Firebase interaction functions
 def push_expense(expense):
     ref = db.reference('/expenses_to_authorize')
     ref.push(expense)
 
 def get_expenses_to_authorize():
     ref = db.reference('/expenses_to_authorize')
-    expenses = ref.get()
-    return expenses if expenses else {}
+    return ref.get()
 
 def remove_expenses_to_authorize():
     ref = db.reference('/expenses_to_authorize')
@@ -33,10 +29,8 @@ def push_authorized_expense(expense):
 
 def get_authorized_expenses():
     ref = db.reference('/authorized_expenses')
-    expenses = ref.get()
-    return expenses if expenses else {}
+    return ref.get()
 
-# Dashboard functions
 def login_page():
     st.title("Login")
 
@@ -57,33 +51,6 @@ def login_page():
             st.session_state.username = username
         else:
             st.error("Invalid username or password")
-
-def admin_dashboard():
-    st.title("Admin Dashboard")
-
-    expenses_to_authorize_data = get_expenses_to_authorize() or {}
-    expenses_to_authorize = [expense for expense in expenses_to_authorize_data.values()]
-    expenses_to_authorize_df = pd.DataFrame(expenses_to_authorize, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted"])
-
-    authorized_expenses_data = get_authorized_expenses() or {}
-    authorized_expenses = [expense for expense in authorized_expenses_data.values()]
-    authorized_expenses_df = pd.DataFrame(authorized_expenses, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
-
-    if not expenses_to_authorize_df.empty:
-        st.subheader("Expenses to Authorize")
-        st.write(expenses_to_authorize_df)
-        if st.button("Authorize All"):
-            authorized_expenses = [
-                {**expense, "Authorized": datetime.datetime.now().isoformat()} for expense in expenses_to_authorize
-            ]
-            for expense in authorized_expenses:
-                push_authorized_expense(expense)
-            remove_expenses_to_authorize()
-            st.success("All expenses authorized")
-
-    if not authorized_expenses_df.empty:
-        st.subheader("Authorized Expenses")
-        st.write(authorized_expenses_df)
 
 def user_dashboard():
     st.title("User Dashboard")
@@ -124,17 +91,45 @@ def user_dashboard():
         else:
             st.error("Please fill in all fields")
 
-def dashboard():
-    if st.session_state.username == "admin":
+def admin_dashboard():
+    st.title("Admin Dashboard")
+
+    expenses_to_authorize_data = get_expenses_to_authorize() or {}
+    expenses_to_authorize = [expense for expense in expenses_to_authorize_data.values()]
+    expenses_to_authorize_df = pd.DataFrame(expenses_to_authorize, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted"])
+
+    authorized_expenses_data = get_authorized_expenses() or {}
+    authorized_expenses = [expense for expense in authorized_expenses_data.values()]
+    authorized_expenses_df = pd.DataFrame(authorized_expenses, columns=["Username", "Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
+
+    if not expenses_to_authorize_df.empty:
+        st.subheader("Expenses to Authorize")
+        st.write(expenses_to_authorize_df)
+        if st.button("Authorize All"):
+            authorized_expenses = [
+                {**expense, "Authorized": datetime.datetime.now().isoformat()} for expense in expenses_to_authorize
+            ]
+            for expense in authorized_expenses:
+                push_authorized_expense(expense)
+            remove_expenses_to_authorize()
+            st.success("All expenses authorized")
+
+    if not authorized_expenses_df.empty:
+        st.subheader("Authorized Expenses")
+        st.write(authorized_expenses_df)
+
+def main():
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
+        st.session_state.username = ""
+
+    if not st.session_state.logged_in:
+        login_page()
+    elif st.session_state.username == "admin":
         admin_dashboard()
     else:
         user_dashboard()
 
-# Main
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
+if __name__ == "__main__":
+    main()
 
-if not st.session_state.logged_in:
-    login_page()
-else:
-    dashboard()
