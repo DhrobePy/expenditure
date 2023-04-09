@@ -7,6 +7,8 @@ from firebase_admin.exceptions import NotFoundError
 from firebase_admin import firestore
 from streamlit_option_menu import option_menu
 
+from expense_function import *
+
 
 
 cred = credentials.Certificate("Exmod.json")
