@@ -192,7 +192,7 @@ def partial_update():
 def au_all():
     st.subheader("Your Authorized Expenses")
     user_expenses_data = get_user_expenses(st.session_state.username) or {}
-    user_authorized_expenses = [expense for expense in user_expenses_data.values() if expense["is_approved"]]
+    user_authorized_expenses = [expense for expense in user_expenses_data.values() if expense.get("is_approved", False)]
     user_authorized_expenses_df = pd.DataFrame(user_authorized_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
     if not user_authorized_expenses_df.empty:
         st.write(user_authorized_expenses_df)
@@ -241,6 +241,7 @@ def user_dashboard():
 
         user_expenses_data = get_user_expenses(st.session_state.username) or {}
         user_authorized_expenses = [expense for expense in user_expenses_data.values() if expense.get("is_approved", False)]
+
 
         if user_authorized_expenses:
             expense_options = [f"{expense['Category']} - {expense['Amount']} - {expense['Date']}" for expense in user_authorized_expenses]
