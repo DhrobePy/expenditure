@@ -15,33 +15,33 @@ cred = credentials.Certificate("Exmod.json")
 #firebase_admin.initialize_app(cred, {'databaseURL': 'https://your-project-id.firebaseio.com/'})
 db = firestore.client()
 
+from firebase_admin import firestore
 
+# Set up Firestore connection
+cred = credentials.Certificate("path/to/firebase-adminsdk.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
-# Firebase interaction functions
+# Firestore interaction functions
 def push_expense(expense):
-    ref = db.reference("/expenses_to_authorize")
-    ref.push(expense)
+    db.collection("expenses_to_authorize").add(expense)
 
 def get_expenses_to_authorize():
-    ref = db.reference("/expenses_to_authorize")
-    return ref.get()
+    return {doc.id: doc.to_dict() for doc in db.collection("expenses_to_authorize").stream()}
 
 def push_authorized_expense(expense):
-    ref = db.reference("/authorized_expenses")
-    ref.push(expense)
+    db.collection("authorized_expenses").add(expense)
 
 def get_authorized_expenses():
-    ref = db.reference("/authorized_expenses")
-    return ref.get()
+    return {doc.id: doc.to_dict() for doc in db.collection("authorized_expenses").stream()}
 
 def remove_expenses_to_authorize(doc_id):
-    ref = db.reference(f"/expenses_to_authorize/{doc_id}")
-    ref.delete()
+    db.collection("expenses_to_authorize").document(doc_id).delete()
 
 def get_user_expenses(username):
-    ref = db.reference("/authorized_expenses")
-    expenses = ref.order_by_child("Username").equal_to(username).get()
-    return expenses
+    return {doc.id: doc.to_dict() for doc in db.collection("authorized_expenses").where("Username", "==", username).stream()}
+
+
 
 # Streamlit functions for login, user dashboard, and admin dashboard
 def login_page():
