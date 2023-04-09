@@ -18,9 +18,7 @@ db = firestore.client()
 from firebase_admin import firestore
 
 # Set up Firestore connection
-cred = credentials.Certificate("path/to/firebase-adminsdk.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+
 
 # Firestore interaction functions
 def push_expense(expense):
