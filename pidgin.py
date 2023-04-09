@@ -125,7 +125,9 @@ def user_dashboard():
 
         if not expenses_to_authorize_df.empty:
             for i, expense in enumerate(expenses_to_authorize):
-                st.write(f"{i + 1}. {expense['Category']}, {expense['Amount']}, {expense['Date']}, {expense['Method']}, {expense['Submitted']}")
+                submitted_datetime = datetime.datetime.fromisoformat(expense['Submitted'])
+                submitted_formatted = submitted_datetime.strftime("%Y-%m-%d, %A, %H:%M")
+                st.write(f"{i + 1}. {expense['Category']}, {expense['Amount']}, {expense['Date']}, {expense['Method']}, {submitted_formatted}")
                 if st.button(f"Delete Expense {i + 1}"):
                     delete_expense(expense["doc_id"])
                     st.success("Expense deleted")
