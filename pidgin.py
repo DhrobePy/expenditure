@@ -139,7 +139,7 @@ def user_dashboard():
             
     with col1.expander("Update Approved Expenses"):
         if not user_expenses_df.empty:
-            editable_expenses_df = user_expenses_df.copy()
+            editable_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
             editable_expenses_df.index = editable_expenses_df.index.map(str)
             updated_expenses = st.write(data_frame=editable_expenses_df, editable=True)
 
