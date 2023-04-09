@@ -216,9 +216,19 @@ def user_dashboard():
         st.title("Add a New Category for clear expense tracking")
         add_category()
         
-    if choice== "Pending Expenses":
-        st.write("Here is your all pending expense that has not been approved yet")
-        pending_expenses()
+    if choice == "Pending Expenses":
+        st.subheader("Your Pending Expenses")
+
+        if st.button("Show Pending Expenses"):
+            user_expenses_data = get_user_expenses(st.session_state.username) or {}
+            user_pending_expenses = [expense for expense in user_expenses_data.values() if not expense["is_approved"]]
+
+            user_pending_expenses_df = pd.DataFrame(user_pending_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted"])
+
+            if not user_pending_expenses_df.empty:
+                st.write(user_pending_expenses_df)
+            else:
+                st.write("No pending expenses to display")
         
     if choice == "Authorized Expenses":
         st.write("Here is your all expenses that has been approved")
