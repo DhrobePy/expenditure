@@ -126,7 +126,7 @@ def user_dashboard():
         else:
             st.write("No pending expenses for authorization")
 
-    if col2.button("Logout"):
+    if col3.button("Logout"):
         st.session_state.logged_in = False
         st.write("Logging out...")
         return
