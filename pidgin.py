@@ -39,6 +39,8 @@ def remove_expenses_to_authorize(doc_id):
 def get_user_expenses(username):
     return {doc.id: doc.to_dict() for doc in db.collection("authorized_expenses").where("Username", "==", username).stream()}
 
+def delete_expense(doc_id):
+    db.collection("expenses_to_authorize").document(doc_id).delete()
 
 
 # Streamlit functions for login, user dashboard, and admin dashboard
@@ -122,7 +124,11 @@ def user_dashboard():
         expenses_to_authorize_df = pd.DataFrame(expenses_to_authorize, columns=["Category", "Amount", "Date", "Method", "Submitted"])
 
         if not expenses_to_authorize_df.empty:
-            st.write(expenses_to_authorize_df)
+            for i, expense in enumerate(expenses_to_authorize):
+                st.write(f"{i + 1}. {expense['Category']}, {expense['Amount']}, {expense['Date']}, {expense['Method']}, {expense['Submitted']}")
+                if st.button(f"Delete Expense {i + 1}"):
+                    delete_expense(expense["doc_id"])
+                    st.success("Expense deleted")
         else:
             st.write("No pending expenses for authorization")
 
