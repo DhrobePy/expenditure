@@ -110,10 +110,7 @@ def user_dashboard():
             st.success("Expense submitted for authorization")
 
     # Logout button below the second expander
-    if col2.button("Logout"):
-        st.session_state.logged_in = False
-        st.write("Logging out...")
-        return
+    
 
     # Third expander: Pending expenses for authorization
     with col3.expander("Pending Expenses"):
@@ -129,7 +126,10 @@ def user_dashboard():
         else:
             st.write("No pending expenses for authorization")
 
-
+    if col2.button("Logout"):
+        st.session_state.logged_in = False
+        st.write("Logging out...")
+        return
 
 
 def admin_dashboard():
