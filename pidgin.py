@@ -67,31 +67,21 @@ def login_page():
 def user_dashboard():
     st.title("User Dashboard")
 
+    col1, col2, col3 = st.columns(3)
 
-    user_expenses_data = get_user_expenses(st.session_state.username) or {}
-    user_expenses = [expense for expense in user_expenses_data.values()]
-    user_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted"])
+    # First expander: Approved user expenses
+    with col1.expander("Approved Expenses"):
+        user_expenses_data = get_user_expenses(st.session_state.username)
+        user_expenses = list(user_expenses_data.values())
+        user_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
 
-    if not user_expenses_df.empty:
-        st.subheader("Your Expenses")
-        st.write(user_expenses_df)
-
-        search_option = st.selectbox("Search expenses by", ["All expenses", "Date"])
-        if search_option == "Date":
-            search_date = st.date_input("Select a date", datetime.date.today())
-            filtered_expenses_df = user_expenses_df[user_expenses_df['Date'] == search_date.isoformat()]
-            st.write(filtered_expenses_df)
-        else:
+        if not user_expenses_df.empty:
             st.write(user_expenses_df)
+        else:
+            st.write("No approved expenses")
 
-    # Adding new expenses
-    # ...
-    if st.button("Logout"):
-        st.session_state.logged_in = False
-        st.write("Logging out...")
-        return
-    
-    with st.expander("Add Expense"):
+    # Second expander: Add expense for submission
+    with col2.expander("Add Expense"):
         category = st.selectbox("Expense Category", ["Raw Material", "Transport", "Utility", "Repair", "Rent"])
         amount = st.number_input("Amount", min_value=0.0, step=0.01)
         expense_date = st.date_input("Expense Date", datetime.date.today())
@@ -118,6 +108,30 @@ def user_dashboard():
 
             push_expense(expense)
             st.success("Expense submitted for authorization")
+
+    # Logout button below the second expander
+    if col2.button("Logout"):
+        st.session_state.logged_in = False
+        st.write("Logging out...")
+        return
+
+    # Third expander: Pending expenses for authorization
+    with col3.expander("Pending Expenses"):
+        expenses_to_authorize_data = get_expenses_to_authorize()
+        expenses_to_authorize = [
+            {**expense, "doc_id": doc_id} for doc_id, expense in expenses_to_authorize_data.items()
+            if expense["Username"] == st.session_state.username
+        ]
+        expenses_to_authorize_df = pd.DataFrame(expenses_to_authorize, columns=["Category", "Amount", "Date", "Method", "Submitted"])
+
+        if not expenses_to_authorize_df.empty:
+            st.write(expenses_to_authorize_df)
+        else:
+            st.write("No pending expenses for authorization")
+
+
+
+
 def admin_dashboard():
     st.title("Admin Dashboard")
 
