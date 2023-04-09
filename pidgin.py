@@ -42,6 +42,9 @@ def get_user_expenses(username):
 def delete_expense(doc_id):
     db.collection("expenses_to_authorize").document(doc_id).delete()
 
+def update_expense(doc_id, updated_expense):
+    db.collection("user_expenses").document(doc_id).set(updated_expense)
+
 
 # Streamlit functions for login, user dashboard, and admin dashboard
 def login_page():
@@ -133,6 +136,21 @@ def user_dashboard():
                     st.success("Expense deleted")
         else:
             st.write("No pending expenses for authorization")
+            
+    with col1.expander("Update Approved Expenses"):
+        if not user_expenses_df.empty:
+            editable_expenses_df = user_expenses_df.copy()
+            editable_expenses_df.index = editable_expenses_df.index.map(str)
+            updated_expenses = st.write(data_frame=editable_expenses_df, editable=True)
+
+            if st.button("Update Expenses"):
+                for index, row in updated_expenses.iterrows():
+                    doc_id = list(user_expenses_data.keys())[int(index)]
+                    updated_expense = row.to_dict()
+                    update_expense(doc_id, updated_expense)
+                st.success("Expenses updated")
+        else:
+            st.write("No approved expenses to update")
 
     if col3.button("Logout"):
         st.session_state.logged_in = False
