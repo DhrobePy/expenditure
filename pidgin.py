@@ -90,7 +90,34 @@ def user_dashboard():
         st.session_state.logged_in = False
         st.write("Logging out...")
         return
+    
+    with st.expander("Add Expense"):
+        category = st.selectbox("Expense Category", ["Raw Material", "Transport", "Utility", "Repair", "Rent"])
+        amount = st.number_input("Amount", min_value=0.0, step=0.01)
+        expense_date = st.date_input("Expense Date", datetime.date.today())
+        method = st.selectbox("Expense Method", ["Cash", "Bank Account"])
 
+        if method == "Cash":
+            cash_deducted_by = st.text_input("Cash Deducted By")
+        elif method == "Bank Account":
+            bank_account = st.selectbox("Bank Account", [f"Bank Account {i}" for i in range(1, 11)])
+
+        if st.button("Submit Expense"):
+            expense = {
+                "Username": st.session_state.username,
+                "Category": category,
+                "Amount": amount,
+                "Date": expense_date.isoformat(),
+                "Method": method,
+                "Submitted": datetime.datetime.now().isoformat(),
+            }
+            if method == "Cash":
+                expense["Cash Deducted By"] = cash_deducted_by
+            elif method == "Bank Account":
+                expense["Bank Account"] = bank_account
+
+            push_expense(expense)
+            st.success("Expense submitted for authorization")
 def admin_dashboard():
     st.title("Admin Dashboard")
 
