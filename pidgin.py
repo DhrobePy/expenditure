@@ -214,7 +214,20 @@ def user_dashboard():
         st.write("Lets Submit new expense")
         submit_expense_choice()
         st.title("Add a New Category for clear expense tracking")
-        add_category()
+        expense_categories = get_expense_categories()
+        expense_category = st.selectbox("Expense Category", [""] + expense_categories)
+
+    # ...
+
+    # Add new category
+        new_category = st.text_input("Add a new expense category")
+        if st.button("Add Category"):
+            if new_category:
+                add_expense_category(new_category)
+                st.success("New category added")
+                expense_categories = get_expense_categories()  # Fetch the updated list of categories
+            else:
+                st.error("Please enter a category name")
         
     if choice == "Pending Expenses":
         st.subheader("Your Pending Expenses")
