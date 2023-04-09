@@ -221,7 +221,8 @@ def user_dashboard():
 
         if st.button("Show Pending Expenses"):
             user_expenses_data = get_user_expenses(st.session_state.username) or {}
-            user_pending_expenses = [expense for expense in user_expenses_data.values() if not expense["is_approved"]]
+            user_pending_expenses = [expense for expense in user_expenses_data.values() if not expense.get("is_approved", False)]
+
 
             user_pending_expenses_df = pd.DataFrame(user_pending_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted"])
 
