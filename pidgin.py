@@ -209,91 +209,61 @@ def user_dashboard():
         menu_icon='cast',
         orientation='horizontal'
     )
-    
-    if choice=="Expense Submission":
-        st.write("Lets Submit new expense")
-        submit_expense_choice()
-        st.title("Add a New Category for clear expense tracking")
-        expense_categories = get_expense_categories()
-        expense_category = st.selectbox("Expense Category", [""] + expense_categories)
 
-    # ...
+    user_expenses_data = get_user_expenses(st.session_state.username) or {}
+    user_expenses = [expense for expense in user_expenses_data.values()]
+    user_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted"])
 
-    # Add new category
-        new_category = st.text_input("Add a new expense category")
-        if st.button("Add Category"):
-            if new_category:
-                add_expense_category(new_category)
-                st.success("New category added")
-                expense_categories = get_expense_categories()  # Fetch the updated list of categories
-            else:
-                st.error("Please enter a category name")
-        
-    if choice == "Pending Expenses":
-        st.subheader("Your Pending Expenses")
+    if not user_expenses_df.empty:
+        st.subheader("Your Expenses")
+        st.write(user_expenses_df)
 
-        if st.button("Show Pending Expenses"):
-            user_expenses_data = get_user_expenses(st.session_state.username) or {}
-            user_pending_expenses = [expense for expense in user_expenses_data.values() if not expense.get("is_approved", False)]
-
-
-            user_pending_expenses_df = pd.DataFrame(user_pending_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted"])
-
-            if not user_pending_expenses_df.empty:
-                st.write(user_pending_expenses_df)
-            else:
-                st.write("No pending expenses to display")
-        
-    if choice == "Authorized Expenses":
-        st.write("Here is your all expenses that has been approved")
-        authorized_expenses_all()
-        au_all()
-        
-    if choice == "Partial Update":
-        st.subheader("Update Your Authorized Expenses")
-
-        user_expenses_data = get_user_expenses(st.session_state.username) or {}
-        user_authorized_expenses = [expense for expense in user_expenses_data.values() if expense.get("is_approved", False)]
-
-
-        if user_authorized_expenses:
-            expense_options = [f"{expense['Category']} - {expense['Amount']} - {expense['Date']}" for expense in user_authorized_expenses]
-            selected_expense = st.selectbox("Select an authorized expense to update", expense_options)
-            expense_index = expense_options.index(selected_expense)
-            expense_id = list(user_expenses_data.keys())[expense_index]
-
-            category = st.selectbox("Expense Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"], index=expense_options.index(user_authorized_expenses[expense_index]["Category"]))
-            amount = st.number_input("Amount", min_value=0.0, step=0.1, value=user_authorized_expenses[expense_index]["Amount"])
-            date = st.date_input("Expense Date", datetime.date.fromisoformat(user_authorized_expenses[expense_index]["Date"]))
-            method = st.selectbox("Expense Method", ["", "Cash", "Credit Card", "Debit Card", "Bank Transfer"], index=expense_options.index(user_authorized_expenses[expense_index]["Method"]))
-
-            if st.button("Update Expense"):
-                updated_expense = {
-                    "Category": category,
-                    "Amount": amount,
-                    "Date": date.isoformat(),
-                    "Method": method,
-                    "is_approved": False,  # Set to pending authorization
-                }
-                update_expense(expense_id, updated_expense)
-                st.success("Expense updated and awaiting authorization")
+        search_option = st.selectbox("Search expenses by", ["All expenses", "Date"])
+        if search_option == "Date":
+            search_date = st.date_input("Select a date", datetime.date.today())
+            filtered_expenses_df = user_expenses_df[user_expenses_df['Date'] == search_date.isoformat()]
+            st.write(filtered_expenses_df)
         else:
-            st.write("No authorized expenses to display")
+            st.write(user_expenses_df)
 
-        
-       
-        
-    
+    expense_category = st.selectbox("Expense Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"])
+    amount = st.number_input("Amount", min_value=0.0, step=0.1)
+    expense_date = st.date_input("Expense Date", datetime.date.today())
+    expense_method = st.selectbox("Expense Method", ["", "Cash", "Credit Card", "Debit Card", "Bank Transfer"])
 
-    
-    
-    #Submit Expense Function:
-    
+    if st.button("Submit Expense"):
+        if expense_category and amount > 0 and expense_method:
+            new_expense = {
+                "Username": st.session_state.username,
+                "Category": expense_category,
+                "Amount": amount,
+                "Date": expense_date.isoformat(),
+                "Method": expense_method,
+                "Submitted": datetime.datetime.now().isoformat(),
+            }
+            push_expense(new_expense)
+            st.success("Expense submitted")
+        else:
+            st.error("Please fill in all fields")
     #add new category 
-    
+    new_category = st.text_input("Add a new expense category")
+    if st.button("Add Category"):
+        if new_category:
+            add_expense_category(new_category)
+            st.success("New category added")
+        else:
+            st.error("Please enter a category name")
     
     #Deleting pending expense
-    
+    st.subheader("Pending Expenses")
+    user_expenses_data = get_user_expenses(st.session_state.username) or {}
+
+    for expense_id, expense in user_expenses_data.items():
+        st.write(f"Category: {expense['Category']}, Amount: {expense['Amount']}, Date: {expense['Date']}, Method: {expense['Method']}")
+        delete_expense_button = st.button(f"Delete expense {expense_id}")
+        if delete_expense_button:
+            delete_pending_expense(expense_id)
+            st.success(f"Expense {expense_id} deleted")
     #add logout button
     if st.button("Logout"):
         st.session_state.logged_in = False
