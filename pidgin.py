@@ -237,8 +237,35 @@ def user_dashboard():
         au_all()
         
     if choice == "Partial Update":
-        st.write("Need to update following entries")
-        partial_update()
+        st.subheader("Update Your Authorized Expenses")
+
+        user_expenses_data = get_user_expenses(st.session_state.username) or {}
+        user_authorized_expenses = [expense for expense in user_expenses_data.values() if expense.get("is_approved", False)]
+
+        if user_authorized_expenses:
+            expense_options = [f"{expense['Category']} - {expense['Amount']} - {expense['Date']}" for expense in user_authorized_expenses]
+            selected_expense = st.selectbox("Select an authorized expense to update", expense_options)
+            expense_index = expense_options.index(selected_expense)
+            expense_id = list(user_expenses_data.keys())[expense_index]
+
+            category = st.selectbox("Expense Category", ["", "Travel", "Food", "Office Supplies", "Rent", "Utilities", "Miscellaneous"], index=expense_options.index(user_authorized_expenses[expense_index]["Category"]))
+            amount = st.number_input("Amount", min_value=0.0, step=0.1, value=user_authorized_expenses[expense_index]["Amount"])
+            date = st.date_input("Expense Date", datetime.date.fromisoformat(user_authorized_expenses[expense_index]["Date"]))
+            method = st.selectbox("Expense Method", ["", "Cash", "Credit Card", "Debit Card", "Bank Transfer"], index=expense_options.index(user_authorized_expenses[expense_index]["Method"]))
+
+            if st.button("Update Expense"):
+                updated_expense = {
+                    "Category": category,
+                    "Amount": amount,
+                    "Date": date.isoformat(),
+                    "Method": method,
+                    "is_approved": False,  # Set to pending authorization
+                }
+                update_expense(expense_id, updated_expense)
+                st.success("Expense updated and awaiting authorization")
+        else:
+            st.write("No authorized expenses to display")
+
         
        
         
