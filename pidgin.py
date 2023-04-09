@@ -89,6 +89,10 @@ def user_dashboard():
 
     # Adding new expenses
     # ...
+    if st.button("Logout"):
+        st.session_state.logged_in = False
+        st.write("Logging out...")
+        return
 
 def admin_dashboard():
     st.title("Admin Dashboard")
@@ -124,7 +128,11 @@ def admin_dashboard():
     if not authorized_expenses_df.empty:
         st.subheader("Authorized Expenses")
         st.write(authorized_expenses_df)
-
+    
+    if st.button("Logout"):
+        st.session_state.logged_in = False
+        st.write("Logging out...")
+        return
 # Streamlit app execution
 def main():
     st.set_page_config(page_title="Expense Tracker", layout="wide")
