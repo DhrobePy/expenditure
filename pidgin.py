@@ -142,7 +142,7 @@ def user_dashboard():
         if not user_expenses_df.empty:
             editable_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
             editable_expenses_df.index = editable_expenses_df.index.map(str)
-            updated_expenses = st.write(data_frame=editable_expenses_df, editable=True)
+            updated_expenses = st.dataframe(editable_expenses_df, editable=True)
 
             if st.button("Update Expenses"):
                 if updated_expenses is not None:
@@ -155,7 +155,6 @@ def user_dashboard():
                     st.warning("No expenses to update")
         else:
             st.write("No approved expenses to update")
-
     if col3.button("Logout"):
         st.session_state.logged_in = False
         st.write("Logging out...")
