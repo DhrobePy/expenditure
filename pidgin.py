@@ -137,6 +137,7 @@ def user_dashboard():
         else:
             st.write("No pending expenses for authorization")
             
+    
     with col1.expander("Update Approved Expenses"):
         if not user_expenses_df.empty:
             editable_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
@@ -144,11 +145,14 @@ def user_dashboard():
             updated_expenses = st.write(data_frame=editable_expenses_df, editable=True)
 
             if st.button("Update Expenses"):
-                for index, row in updated_expenses.iterrows():
-                    doc_id = list(user_expenses_data.keys())[int(index)]
-                    updated_expense = row.to_dict()
-                    update_expense(doc_id, updated_expense)
-                st.success("Expenses updated")
+                if updated_expenses is not None:
+                    for index, row in updated_expenses.iterrows():
+                        doc_id = list(user_expenses_data.keys())[int(index)]
+                        updated_expense = row.to_dict()
+                        update_expense(doc_id, updated_expense)
+                    st.success("Expenses updated")
+                else:
+                    st.warning("No expenses to update")
         else:
             st.write("No approved expenses to update")
 
