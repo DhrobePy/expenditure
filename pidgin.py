@@ -13,7 +13,7 @@ from expense_function import *
 
 
 
-cred = credentials.Certificate("Exmod.json")
+cred = credentials.Certificate("exensefinal.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
