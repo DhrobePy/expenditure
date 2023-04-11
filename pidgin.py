@@ -6,6 +6,8 @@ from firebase_admin import credentials
 from firebase_admin.exceptions import NotFoundError
 from firebase_admin import firestore
 from streamlit_option_menu import option_menu
+from st_aggrid import AgGrid
+
 
 from expense_function import *
 
@@ -141,12 +143,13 @@ def user_dashboard():
     with col1.expander("Update Approved Expenses"):
         if not user_expenses_df.empty:
             editable_expenses_df = pd.DataFrame(user_expenses, columns=["Category", "Amount", "Date", "Method", "Submitted", "Authorized"])
-            editable_expenses_df.index = editable_expenses_df.index.map(str)
-            updated_expenses = st.dataframe(editable_expenses_df, editable=True)
+            grid_response = AgGrid(editable_expenses_df, editable=True, fit_columns_on_grid_load=True)
+            updated_expenses = grid_response['data']
 
             if st.button("Update Expenses"):
                 if updated_expenses is not None:
-                    for index, row in updated_expenses.iterrows():
+                    updated_expenses_df = pd.DataFrame(updated_expenses)
+                    for index, row in updated_expenses_df.iterrows():
                         doc_id = list(user_expenses_data.keys())[int(index)]
                         updated_expense = row.to_dict()
                         update_expense(doc_id, updated_expense)
@@ -155,10 +158,6 @@ def user_dashboard():
                     st.warning("No expenses to update")
         else:
             st.write("No approved expenses to update")
-    if col3.button("Logout"):
-        st.session_state.logged_in = False
-        st.write("Logging out...")
-        return
 
 
 def admin_dashboard():
